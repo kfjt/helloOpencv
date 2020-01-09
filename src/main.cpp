@@ -11,6 +11,8 @@ int main()
 
     cout << "net" << endl;
     cv::dnn::Net net = cv::dnn::readNet("model.onnx");
+    if(net.empty()) return -1;
+
     cv::Mat img = imread("kuchikomi889.jpg", cv::IMREAD_GRAYSCALE);
     if(img.empty()) return -1;
 
@@ -19,13 +21,14 @@ int main()
     resize(img, dst, cv::Size(64, 64));
     cv::Mat blob = cv::dnn::blobFromImage(dst);
     net.setInput(blob);
+
     cout << "forward" << endl;
     cv::Mat result;
     try
     {
         result = net.forward();
     }
-    catch(const std::exception& e)
+    catch(cv::Exception& e)
     {
         std::cerr << e.what() << '\n';
     }
@@ -33,12 +36,10 @@ int main()
 
     cout << "result" << endl;
     cout << result << endl;
-    cout << result.size << endl;
+    cout << result.rows << endl;
+    cout << result.cols << endl;
+    cout << result.row(0).col(0) << endl;
+    cout << result.row(0).col(1) << endl;
 
-    cv::namedWindow("hogehoge", cv::WINDOW_AUTOSIZE);
-    cv::imshow("hogehoge", dst);
-    cv::waitKey(0);
-
-    cv::destroyAllWindows();
     cout << "Finish" << endl;
 }
